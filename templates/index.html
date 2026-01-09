@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Flask Interaction</title>
+</head>
+<body>
+    <h1>Interact with Python</h1>
+    
+    <!-- Form to send data to Python -->
+    <form method="POST">
+        <input type="text" name="name" placeholder="Enter your name">
+        <button type="submit">Submit</button>
+    </form>
+
+    <!-- Display results from Python -->
+    {% if result %}
+        <h3>{{ result }}</h3>
+    {% endif %}
+</body>
+</html>
