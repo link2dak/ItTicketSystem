@@ -4,13 +4,54 @@
     <meta charset="UTF-8">
     <title>Flask Interaction</title>
 </head>
+
+<style>
+  .form-container {
+    display: grid;
+    grid-template-columns: max-content 1fr; /* Column 1 fits label, Column 2 fills space */
+    gap: 10px 20px; /* Space between rows and columns */
+    align-items: center; /* Vertically center items */
+    max-width: 500px;
+  }
+  .form-container select {
+    width: 180px;
+    
+  }
+   .form-container button {
+      grid-column: 1 / -1; /* span full width */
+      margin-top: 20px;
+    }
+</style>
+
 <body>
-    <h1>Interact with Python</h1>
+    <h1>Submit an IT support Ticket</h1>
     
     <!-- Form to send data to Python -->
-    <form method="POST">
-        <input type="text" name="name" placeholder="Enter your name">
-        <button type="submit">Submit</button>
+    <form class="form-container" action="submit" method="POST">
+        <label for="name">Your Name</label>
+        <input type="text" id="name" name="name">
+        <label for="email">Your Email</label>
+        <input type="text" id="email" name="email">
+        <label for="department">Department</label>
+        <select id=department name="department">
+            <option value="sales"> Sales</option>
+            <option value="HR"> HR</option>
+            <option value="Finance"> Finance</option>
+            <option value="Operations"> Operations</option>            
+        </select>
+        <label for="priority">Priority</label>
+        <select id=priority name="priority">
+            <option value="high"> High</option>
+            <option value="medium"> Medium</option>
+            <option value="low"> Low</option>
+        </select>
+        <label for="subject">Subject</label>
+        <input type="text" id="subject" name="subject">
+        <label for="description">Description</label>
+        <textarea id="description" name="description" rows="4" cols="50">
+        </textarea>
+        <button type="submit">Submit Ticket</button>
+
     </form>
 
     <!-- Display results from Python -->

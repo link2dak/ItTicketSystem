@@ -1,17 +1,18 @@
-from flask import Flask, render_template, request
+from flask import Flask,redirect,url_for,render_template,request
 
 app = Flask(__name__)
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/')
 def home():
-    result = None
-    if request.method == 'POST':
-        # Get data from the HTML form
-        name = request.form.get('name')
-        result = f"Hello, {name}! This is from Python."
-    
     # Render the HTML and pass data to it
-    return render_template('index.html', result=result)
+    return render_template('index.html')
+
+
+@app.route('/submit', methods = ['POST', 'GET'])
+def submit():
+    if request.method == 'POST':
+        print('working')
+    
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug = True)
