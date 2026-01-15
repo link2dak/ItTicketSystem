@@ -6,28 +6,71 @@
 </head>
 
 <style>
-  .form-container {
+  .form-container-main {
     display: grid;
     grid-template-columns: max-content 1fr; /* Column 1 fits label, Column 2 fills space */
     gap: 10px 20px; /* Space between rows and columns */
     align-items: center; /* Vertically center items */
     max-width: 500px;
   }
-  .form-container select {
+  .form-container-main select {
     width: 180px;
     
   }
-   .form-container button {
+   .form-container-main button {
       grid-column: 1 / -1; /* span full width */
       margin-top: 20px;
     }
+    .tab {
+        overflow: hidden;
+        border: 1px solid #ccc;
+        background-color: #f1f1f1;
+        justify-content: center;
+    }
+    /* Style the buttons inside the tab */
+    .tab button {
+        background-color: inherit;
+        float: left;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        padding: 14px 16px;
+        transition: 0.3s;
+        font-size: 17px;
+    }
+    /* Change background color of buttons on hover */
+    .tab button:hover {
+        background-color: #ddd;
+    }
+
+    /* Create an active/current tablink class */
+    .tab button.active {
+        background-color: #ccc;
+    }
+
+    .tabcontentlist{
+        display: none;
+        padding: 6px 12px;
+        border: 1px solid #ccc;
+        border-top: none;
+    }
+
 </style>
 
 <body>
+    <!--making tabs-->
+    <div class="tab">
+        <button class="tablinks" onclick="openPage(event, 'Ticket Submission')">Ticket Submission</button>
+        <button class="tablinks" onclick="openPage(event, 'Ticket List')">Ticket List</button>
+    </div>
     <h1>Submit an IT support Ticket</h1>
+        <!--tab content for list-->
     
+    <div id="Ticket List" class="tabcontentlist">
+        <h2>this is the list of things you are looking for</h2>
+    </div>
     <!-- Form to send data to Python -->
-    <form class="form-container" action="submit" method="POST">
+    <form class="form-container-main" action="submit" method="POST">
         <label for="name">Your Name</label>
         <input type="text" id="name" name="name">
         <label for="email">Your Email</label>
@@ -51,8 +94,46 @@
         <textarea id="description" name="description" rows="4" cols="50">
         </textarea>
         <button type="submit">Submit Ticket</button>
-
     </form>
+    <script>
+        function openPage(evt, name){
+            var i, tabcontentmain, tabcontentlist
+            //will bring up the ticket submission site
+            if(name === "Ticket Submission"){ 
+
+                //displaying the ticket list page
+                tabcontentmain = document.getElementsByClassName("form-container-main")
+                tabcontentmain[0].style.display = "grid";
+                
+                //hiding the ticket submission page
+                tabcontentlist = document.getElementsByClassName("tabcontentlist")
+                tabcontentlist[0].style.display = "none";
+                
+
+            }
+            else if(name = "Ticket List"){
+                //displaying the ticket list page
+                tabcontentlist = document.getElementsByClassName("tabcontentlist")
+                tabcontentlist[0].style.display = "block";
+                
+                //hiding the ticket submission page
+                tabcontentmain = document.getElementsByClassName("form-container-main")
+                tabcontentmain[0].style.display = "none";
+            }
+
+            //makes all buttons look inactive
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+
+            //activate the currently used button
+            evt.currentTarget.className += " active";
+
+
+
+        }
+    </script>
 
     <!-- Display results from Python -->
     {% if result %}
