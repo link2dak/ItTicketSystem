@@ -24,7 +24,6 @@ def submit():
                     'priority': request.form['priority'],
                     'subject': request.form['subject'],
                     'description': request.form['description']})
-        
     return redirect(url_for('result'))
 
 if __name__ == '__main__':
