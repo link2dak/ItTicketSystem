@@ -1,4 +1,5 @@
 from flask import Flask,redirect,url_for,render_template,request
+import pdb
 
 app = Flask(__name__)
 lis = []
@@ -17,6 +18,9 @@ def result():
 
 @app.route('/submit', methods = ['POST', 'GET'])
 def submit():
+    #added breakpoint for debugging
+    pdb.set_trace
+
     if request.method == 'POST':
         lis.append({"name": request.form['name'],
                     "email": request.form['email'],
