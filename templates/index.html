@@ -6,21 +6,35 @@
 </head>
 
 <style>
-  .form-container-main {
+  .form-main {
     display: grid;
     grid-template-columns: max-content 1fr; /* Column 1 fits label, Column 2 fills space */
     gap: 10px 20px; /* Space between rows and columns */
     align-items: center; /* Vertically center items */
     max-width: 500px;
   }
-  .form-container-main select {
-    width: 180px;
-    
-  }
-   .form-container-main button {
+  .form-main button {
       grid-column: 1 / -1; /* span full width */
       margin-top: 20px;
     }
+    .form-main select {
+    width: 180px; 
+  }
+  .form-main-header{
+    display: block;
+  }
+
+  .content-list{
+        display: none;
+        padding: 6px 12px;
+        border: 1px solid #ccc;
+        border-top: none;
+    }
+
+  .content-list-header{
+    display: none;
+  }
+
     .tab {
         overflow: hidden;
         border: 1px solid #ccc;
@@ -48,13 +62,6 @@
         background-color: #ccc;
     }
 
-    .tabcontentlist{
-        display: none;
-        padding: 6px 12px;
-        border: 1px solid #ccc;
-        border-top: none;
-    }
-
 </style>
 
 <body>
@@ -64,15 +71,22 @@
         <button class="tablinks" onclick="openPage(event, 'Ticket List')">Ticket List</button>
     </div>
 
-    <!--make new class for this so it can dissapear on tab change-->
-    <h1>Submit an IT support Ticket</h1>
+    <!-- make new class for this so it can dissapear on tab change-->
+    <div class = form-main-header>
+        <h1>Submit an IT support Ticket</h1>
+    </div>
+    <div class = content-list-header>
+        <h1>It Ticket List</h1>
+    </div>    
+    
         <!--tab content for list-->
     
-    <div id="Ticket List" class="tabcontentlist">
+    <div class="content-list">
+
         <h2>this is the list of things you are looking for</h2>
     </div>
     <!-- Form to send data to Python -->
-    <form class="form-container-main" action="submit" method="POST">
+    <form class="form-main" action="submit" method="POST">
         <label for="name">Your Name</label>
         <input type="text" id="name" name="name">
         <label for="email">Your Email</label>
@@ -99,27 +113,39 @@
     </form>
     <script>
         function openPage(evt, name){
-            var i, tabcontentmain, tabcontentlist
+            var i, tabcontentmain, tabcontentlist, tabheadermain, tabheadersecond
             //will bring up the ticket submission site
             if(name === "Ticket Submission"){ 
 
+                //displaying correct header for page
+                document.querySelector(".form-main-header").style.display = "block";
+                //hiding the other header
+                document.querySelector(".content-list-header").style.display = "none";
+
+
                 //displaying the ticket list page
-                tabcontentmain = document.getElementsByClassName("form-container-main")
+                tabcontentmain = document.getElementsByClassName("form-main")
                 tabcontentmain[0].style.display = "grid";
                 
                 //hiding the ticket submission page
-                tabcontentlist = document.getElementsByClassName("tabcontentlist")
+                tabcontentlist = document.getElementsByClassName("content-list")
                 tabcontentlist[0].style.display = "none";
                 
 
             }
             else if(name = "Ticket List"){
+                //displaying correct header for page
+                document.querySelector(".content-list-header").style.display = "block";
+
+                //blocking the other header
+                document.querySelector(".form-main-header").style.display = "none";
+
                 //displaying the ticket list page
-                tabcontentlist = document.getElementsByClassName("tabcontentlist")
+                tabcontentlist = document.getElementsByClassName("content-list")
                 tabcontentlist[0].style.display = "block";
                 
                 //hiding the ticket submission page
-                tabcontentmain = document.getElementsByClassName("form-container-main")
+                tabcontentmain = document.getElementsByClassName("form-main")
                 tabcontentmain[0].style.display = "none";
             }
 
