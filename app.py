@@ -7,12 +7,17 @@ lis = []
 @app.route('/')
 def home():
     # Render the HTML and pass data to it
+    return render_template('index.html', result = lis)
+
+
+@app.route('/ticketSubmission')
+def ticketSubmission():
     return render_template('index.html')
 
-@app.route('/result')
+@app.route('/ticketList', methods = ['GET'])
 def result():
     #need to change so it shows currnet list
-    return render_template('result.html')
+    return render_template('ticketList.html')
 
 
 
@@ -28,7 +33,7 @@ def submit():
                     'priority': request.form['priority'],
                     'subject': request.form['subject'],
                     'description': request.form['description']})
-    return redirect(url_for('result'))
+    return redirect(url_for('home'))
 
 if __name__ == '__main__':
     app.run(debug = True)

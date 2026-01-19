@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Flask Interaction</title>
+    <title>Ticket Submission</title>
 </head>
 
 <style>
@@ -66,10 +66,16 @@
 
 <body>
     <!--making tabs-->
-    <div class="tab">
-        <button class="tablinks" onclick="openPage(event, 'Ticket Submission')">Ticket Submission</button>
-        <button class="tablinks" onclick="openPage(event, 'Ticket List')">Ticket List</button>
-    </div>
+    <form class="tab" method="GET">
+       <button type="submit" class="tablinks"
+            formaction="{{ url_for('ticketSubmission') }}">
+        Ticket Submission
+        </button>
+         <button type="submit" class="tablinks"
+            formaction="{{ url_for('ticketList') }}">
+        Ticket List
+    </button>
+    </form>
 
     <!-- make new class for this so it can dissapear on tab change-->
     <div class = form-main-header>
@@ -79,12 +85,7 @@
         <h1>It Ticket List</h1>
     </div>    
     
-        <!--tab content for list-->
     
-    <div class="content-list">
-
-        <h2>this is the list of things you are looking for</h2>
-    </div>
     <!-- Form to send data to Python -->
     <form class="form-main" action="submit" method="POST">
         <label for="name">Your Name</label>
@@ -111,64 +112,21 @@
         </textarea>
         <button type="submit">Submit Ticket</button>
     </form>
-    <script>
-        function openPage(evt, name){
-            var i, tabcontentmain, tabcontentlist, tabheadermain, tabheadersecond
-            //will bring up the ticket submission site
-            if(name === "Ticket Submission"){ 
+    <script>  
+        
 
-                //displaying correct header for page
-                document.querySelector(".form-main-header").style.display = "block";
-                //hiding the other header
-                document.querySelector(".content-list-header").style.display = "none";
-
-
-                //displaying the ticket list page
-                tabcontentmain = document.getElementsByClassName("form-main")
-                tabcontentmain[0].style.display = "grid";
-                
-                //hiding the ticket submission page
-                tabcontentlist = document.getElementsByClassName("content-list")
-                tabcontentlist[0].style.display = "none";
-                
-
-            }
-            else if(name = "Ticket List"){
-                //displaying correct header for page
-                document.querySelector(".content-list-header").style.display = "block";
-
-                //blocking the other header
-                document.querySelector(".form-main-header").style.display = "none";
-
-                //displaying the ticket list page
-                tabcontentlist = document.getElementsByClassName("content-list")
-                tabcontentlist[0].style.display = "block";
-                
-                //hiding the ticket submission page
-                tabcontentmain = document.getElementsByClassName("form-main")
-                tabcontentmain[0].style.display = "none";
-            }
-
-            //makes all buttons look inactive
-            tablinks = document.getElementsByClassName("tablinks");
-            for (i = 0; i < tablinks.length; i++) {
-                tablinks[i].className = tablinks[i].className.replace(" active", "");
-            }
-
-            //activate the currently used button
-            evt.currentTarget.className += " active";
-
-
-
-        }
+        tablinks = document.getElementsByClassName("tablinks");
+        tablinks[0].classList.add("active")
     </script>
 
     <!-- Display results from Python -->
     {% if result %}
-        <h3>{{ result }}</h3>
+        {{result | length}}
     {% endif %}
 </body>
 </html>
 
 
 <!--site for js and tab usage     https://www.w3schools.com/howto/howto_js_tabs.asp    -->
+
+<!--use result variable to create new flag buttons, use js to create the buttons and use html to call the function in js-->
