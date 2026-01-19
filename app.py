@@ -15,9 +15,9 @@ def ticketSubmission():
     return render_template('index.html')
 
 @app.route('/ticketList', methods = ['GET'])
-def result():
+def ticketList():
     #need to change so it shows currnet list
-    return render_template('ticketList.html')
+    return render_template('ticketList.html', result = lis)
 
 
 
