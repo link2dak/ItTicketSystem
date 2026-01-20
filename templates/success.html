@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ticket List</title>
+</head>
+
+<body> 
+    {% if result == 1 %}
+        <h1>file successfully submitted</h1>
+    {% elif result == 0 %}
+        <h1>Error. something went wrong with submitting the file</h1>
+    {% elif result == 2 %}
+        <h1>Error. Please make sure to fill all fields.</h1>
+    {% endif %}
+    <form method="GET">
+       <button type="submit" class="tablinks"
+            formaction="{{ url_for('home') }}">
+        Back to Home Page
+        </button>
+    </form>
+</body>
