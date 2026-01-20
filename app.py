@@ -54,18 +54,30 @@ def submit():
 
 # orgainzes dictionary in order according to priority. High being at the top
 def organize(dict, list):
-    i = len(list) - 1
+    i = len(list) - 1 
+    dictPriority = prioityCheck(dict['priority'])
+
+    #checks for an empty list, and appends dict
+    if len(list) == 0:
+        list.append(dict)
+        return
+    # loops through list and finds correct index for dict
     for dictlis in reversed(list):
+        dictlisPriority = prioityCheck(dictlis['priority'])
         # If priority value is same, then put in list right after 
-        if prioityCheck(dict['priority']) == prioityCheck(dictlis['priority']):
+        if dictPriority == dictlisPriority:
             list.insert(i+1, dict)
             return
         # If higher put in list earlier
-        elif prioityCheck(dict['priority']) > prioityCheck(dictlis['priority']):
-            list.insert(i, dict)
-            return                                                      
-        i = i+1
-    list.append(dict)        
+        elif dictPriority > dictlisPriority:
+            i = i-1      
+            continue
+        # if it is less than, put in list right after
+        elif dictPriority < dictlisPriority:
+            list.insert(i+1, dict)
+            return
+    # if whole list is looped, means that the item is highest priority
+    list.insert(0, dict)
         
 def prioityCheck(priority):
     if priority == "High":
