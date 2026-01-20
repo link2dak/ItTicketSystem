@@ -113,15 +113,13 @@
         <button type="submit">Submit Ticket</button>
     </form>
     <script>  
-        
-
         tablinks = document.getElementsByClassName("tablinks");
         tablinks[0].classList.add("active")
     </script>
 
     <!-- Display results from Python -->
     {% if result %}
-        {{result | length}}
+        Ticket Successfully submitted
     {% endif %}
 </body>
 </html>

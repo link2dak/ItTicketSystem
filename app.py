@@ -7,10 +7,16 @@ lis = []
 @app.route('/')
 def home():
     # Render the HTML and pass data to it
-    return render_template('index.html', result = lis)
+    return render_template('index.html')
 
+# this page is loaded when successfully submitting a form
+@app.route('/result')
+def result():
+    # getting the value of the success variable
+    result = request.args.get('result')
+    return render_template('success.html', result = int(result))
 
-@app.route('/ticketSubmission')
+@app.route('/ticketSubmission', methods = ['GET'])
 def ticketSubmission():
     return render_template('index.html')
 
@@ -25,35 +31,41 @@ def ticketList():
 def submit():
     #added breakpoint for debugging
     pdb.set_trace
+    try:
+        if request.method == 'POST':
+            dict = {"name": request.form['name'].capitalize(),
+                        "email": request.form['email'].capitalize(),
+                        "department": request.form['department'].capitalize(),
+                        'priority': request.form['priority'].capitalize(),
+                        'subject': request.form['subject'].capitalize(),
+                        'description': request.form['description'].capitalize()}
+            if checkForEmptySpaces(dict):
+                # organizes and appends new element to lis
+                organize(dict, lis)
 
-    if request.method == 'POST':
-         dict = {"name": request.form['name'].capitalize(),
-                    "email": request.form['email'].capitalize(),
-                    "department": request.form['department'].capitalize(),
-                    'priority': request.form['priority'].capitalize(),
-                    'subject': request.form['subject'].capitalize(),
-                    'description': request.form['description'].capitalize()}
-         organize(dict)
-    
-    return redirect(url_for('home'))
+                # will return a result url with a success
+                return redirect(url_for('result', result=1))
+            else:
+                # if the dictionary saves correctly, but there are missing attributes
+                return redirect(url_for('result', result=2))
+    except:
+        # will return a result url showing no success
+        return redirect(url_for('result', result=0))
 
-# orginzes dictionary in order according to priority. High being at the top
-def organize(dict):
-    pdb.set_trace
-    i = len(lis) - 1
-    for dictlis in reversed(lis):
+# orgainzes dictionary in order according to priority. High being at the top
+def organize(dict, list):
+    i = len(list) - 1
+    for dictlis in reversed(list):
         # If priority value is same, then put in list right after 
         if prioityCheck(dict['priority']) == prioityCheck(dictlis['priority']):
-            lis.insert(i+1, dict)
+            list.insert(i+1, dict)
             return
         # If higher put in list earlier
         elif prioityCheck(dict['priority']) > prioityCheck(dictlis['priority']):
-            lis.insert(i, dict)
+            list.insert(i, dict)
             return                                                      
         i = i+1
-    lis.append(dict)
-    
-        
+    list.append(dict)        
         
 def prioityCheck(priority):
     if priority == "High":
@@ -62,6 +74,13 @@ def prioityCheck(priority):
         return 2
     elif priority == 'Low':
         return 1
+    
 
+def checkForEmptySpaces(dict):
+    for value in dict.values():
+        # checks if the value is not empty and doesnt only contain blank space
+        if not value or value.isspace():
+            return False
+    return True
 if __name__ == '__main__':
     app.run(debug = True)
