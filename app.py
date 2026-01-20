@@ -52,7 +52,7 @@ def submit():
         # will return a result url showing no success
         return redirect(url_for('result', result=0))
 
-# orgainzes dictionary in order according to priority. High being at the top
+# orgainzes dictionary in order according to priority and how long ticket has been active.
 def organize(dict, list):
     i = len(list) - 1 
     dictPriority = prioityCheck(dict['priority'])
