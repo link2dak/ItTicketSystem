@@ -1,68 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link
+    rel="stylesheet"
+    href="static/css/styles.css"
+  >
     <meta charset="UTF-8">
     <title>Ticket Submission</title>
 </head>
-
-<style>
-  .form-main {
-    display: grid;
-    grid-template-columns: max-content 1fr; /* Column 1 fits label, Column 2 fills space */
-    gap: 10px 20px; /* Space between rows and columns */
-    align-items: center; /* Vertically center items */
-    max-width: 500px;
-  }
-  .form-main button {
-      grid-column: 1 / -1; /* span full width */
-      margin-top: 20px;
-    }
-    .form-main select {
-    width: 180px; 
-  }
-  .form-main-header{
-    display: block;
-  }
-
-  .content-list{
-        display: none;
-        padding: 6px 12px;
-        border: 1px solid #ccc;
-        border-top: none;
-    }
-
-  .content-list-header{
-    display: none;
-  }
-
-    .tab {
-        overflow: hidden;
-        border: 1px solid #ccc;
-        background-color: #f1f1f1;
-        justify-content: center;
-    }
-    /* Style the buttons inside the tab */
-    .tab button {
-        background-color: inherit;
-        float: left;
-        border: none;
-        outline: none;
-        cursor: pointer;
-        padding: 14px 16px;
-        transition: 0.3s;
-        font-size: 17px;
-    }
-    /* Change background color of buttons on hover */
-    .tab button:hover {
-        background-color: #ddd;
-    }
-
-    /* Create an active/current tablink class */
-    .tab button.active {
-        background-color: #ccc;
-    }
-
-</style>
 
 <body>
     <!--making tabs-->
@@ -106,17 +51,8 @@
         </textarea>
         <button type="submit">Submit Ticket</button>
     </form>
-    <!-- <script>  
-        tablinks = document.getElementsByClassName("tablinks");
-        tablinks[0].classList.add("active")
-    </script> -->
 
-    <script src="static/tabButton.js" defer></script>
-
-    <!-- Display results from Python -->
-    {% if result %}
-        Ticket Successfully submitted
-    {% endif %}
+    <script src="static/js/tabButton.js" defer></script>
 </body>
 </html>
 
