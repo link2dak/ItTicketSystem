@@ -66,16 +66,10 @@
 
 <body>
     <!--making tabs-->
-    <form class="tab" method="GET">
-       <button type="submit" class="tablinks"
-            formaction="{{ url_for('ticketSubmission') }}">
-        Ticket Submission
-        </button>
-         <button type="submit" class="tablinks"
-            formaction="{{ url_for('ticketList') }}">
-        Ticket List
-    </button>
-    </form>
+    <div class="tab">
+        <button class="tablinks" data-url="{{ url_for('ticketSubmission') }}" data-state="active">Ticket Submission</button>
+        <button class="tablinks" data-url="{{ url_for('ticketList') }}" data-state="inactive">Ticket List</button>
+    </div>
 
     <!-- make new class for this so it can dissapear on tab change-->
     <div class = form-main-header>
@@ -112,10 +106,12 @@
         </textarea>
         <button type="submit">Submit Ticket</button>
     </form>
-    <script>  
+    <!-- <script>  
         tablinks = document.getElementsByClassName("tablinks");
         tablinks[0].classList.add("active")
-    </script>
+    </script> -->
+
+    <script src="static/tabButton.js" defer></script>
 
     <!-- Display results from Python -->
     {% if result %}

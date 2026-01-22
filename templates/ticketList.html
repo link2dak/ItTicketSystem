@@ -54,16 +54,11 @@
     }
 </style>
 <body>
-     <form class="tab" method="GET">
-       <button type="submit" class="tablinks"
-            formaction="{{ url_for('ticketSubmission') }}">
-        Ticket Submission
-        </button>
-         <button type="submit" class="tablinks"
-            formaction="{{ url_for('ticketList') }}">
-        Ticket List
-    </button>
-    </form>
+     <!--making tabs-->
+    <div class="tab">
+        <button class="tablinks" data-url="{{ url_for('ticketSubmission') }}" data-state="inactive">Ticket Submission</button>
+        <button class="tablinks" data-url="{{ url_for('ticketList') }}" data-state="active">Ticket List</button>
+    </div>
 
     <h1>Ticket Submissions</h1>
 
@@ -91,23 +86,7 @@
   <p>No Tickets Submitted.</p>
 {% endif %}
 </body>
-<script>
-    tablinks = document.getElementsByClassName("tablinks");
-    tablinks[1].classList.add("active")
 
-    var coll = document.getElementsByClassName("collapsible");
-    var i;
 
-    for (i = 0; i < coll.length; i++) {
-        coll[i].addEventListener("click", function() {
-        this.classList.toggle("active");
-        var content = this.nextElementSibling;
-        if (content.style.display === "block") {
-        content.style.display = "none";
-        } else {
-        content.style.display = "block";
-        }
-    });
-}
-
-</script>
+<script src="static/tabButton.js" defer></script>
+<script src="static/collapsibleContent.js"></script>

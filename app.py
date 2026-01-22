@@ -40,11 +40,13 @@ def submit():
                         'subject': request.form['subject'].capitalize(),
                         'description': request.form['description'].capitalize()}
             if checkForEmptySpaces(dict):
-                # organizes and appends new element to lis
-                organize(dict, lis)
-
-                # will return a result url with a success
-                return redirect(url_for('result', result=1))
+                # organizes and appends new element to lis if not then return bad result
+                try:
+                    organize(dict, lis)
+                    # will return a result url with a success
+                    return redirect(url_for('result', result=1))
+                except:
+                    return redirect(url_for('result', result=0))
             else:
                 # if the dictionary saves correctly, but there are missing attributes
                 return redirect(url_for('result', result=2))
