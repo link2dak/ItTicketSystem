@@ -8,7 +8,8 @@
             console.log("there has been a match for active")
             coll[i].classList.toggle("active")
             content.style.display = "block";
-
+            
+            //makes the state inactive again
             coll[i].dataset.state = "inactive";
         }
         

@@ -26,7 +26,7 @@ def ticketList():
     global currentdict
     return render_template('ticketList.html', result = lis, currentdict = None)
 
-@app.route('/tiecktListSubmission')
+@app.route('/ticketListSubmission')
 def tiecktListSubmission():
     global currentdict
     return render_template('ticketList.html', result = lis, currentdict = currentdict)
