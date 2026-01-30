@@ -22,9 +22,15 @@
 <!--checks if there are any submissions-->
 {% if result %}
   {% for ticket in result %}
-    <button type= "button" class="collapsible">
-       Priority: {{ ticket.priority }}, {{ticket.name}}
-    </button>
+    {% if ticket == currentdict %}
+      <button type= "button" class="collapsible" data-state="active">
+        Priority: {{ ticket.priority }}, {{ticket.name}}
+      </button>
+    {% else %}
+      <button type= "button" class="collapsible" data-state="inactive">
+        Priority: {{ ticket.priority }}, {{ticket.name}}
+      </button>
+    {% endif %}
     <!--adds the discription to the drop down-->
     <div class= "content">
         <P>

@@ -3,6 +3,7 @@ import pdb
 
 app = Flask(__name__)
 lis = []
+currentdict = {}
 
 @app.route('/')
 def home():
@@ -22,8 +23,13 @@ def ticketSubmission():
 
 @app.route('/ticketList', methods = ['GET'])
 def ticketList():
-    #need to change so it shows currnet list
-    return render_template('ticketList.html', result = lis)
+    global currentdict
+    return render_template('ticketList.html', result = lis, currentdict = None)
+
+@app.route('/tiecktListSubmission')
+def tiecktListSubmission():
+    global currentdict
+    return render_template('ticketList.html', result = lis, currentdict = currentdict)
 
 
 
@@ -31,18 +37,19 @@ def ticketList():
 def submit():
     #added breakpoint for debugging
     pdb.set_trace
+    global currentdict
     try:
         if request.method == 'POST':
-            dict = {"name": request.form['name'].capitalize(),
+            currentdict = {"name": request.form['name'].capitalize(),
                         "email": request.form['email'].capitalize(),
                         "department": request.form['department'].capitalize(),
                         'priority': request.form['priority'].capitalize(),
                         'subject': request.form['subject'].capitalize(),
                         'description': request.form['description'].capitalize()}
-            if checkForEmptySpaces(dict):
+            if checkForEmptySpaces(currentdict):
                 # organizes and appends new element to lis if not then return bad result
                 try:
-                    organize(dict, lis)
+                    organize(currentdict, lis)
                     # will return a result url with a success
                     return redirect(url_for('result', result=1))
                 except:

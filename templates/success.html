@@ -16,7 +16,10 @@
     <form method="GET">
        <button type="submit" class="tablinks"
             formaction="{{ url_for('home') }}">
-        Back to Home Page
+         Make another submission
+        </button>
+        <button type="submit" class="tablinks" formaction="{{ url_for('tiecktListSubmission') }}">
+            View list
         </button>
     </form>
 </body>
