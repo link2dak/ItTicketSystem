@@ -1,7 +1,8 @@
-from flask import Flask,redirect,url_for,render_template,request
+from flask import Flask,redirect,url_for,render_template,request, session
 import pdb
-
 app = Flask(__name__)
+app.secret_key = "super-secret-key"
+
 lis = []
 currentdict = {}
 
@@ -13,11 +14,10 @@ def home():
 # this page is loaded when successfully submitting a form
 @app.route('/result')
 def result():
-    # getting the value of the success variable
-    result = request.args.get('result')
-    return render_template('success.html', result = int(result))
+    result = session.get('result')
+    return render_template('success.html', result=result)
 
-@app.route('/ticketSubmission', methods = ['GET'])
+@app.route('/ticketSubmission')
 def ticketSubmission():
     return render_template('index.html')
 
@@ -34,6 +34,7 @@ def tiecktListSubmission():
 
 
 @app.route('/submit', methods = ['POST', 'GET'])
+
 def submit():
     #added breakpoint for debugging
     pdb.set_trace
@@ -48,18 +49,20 @@ def submit():
                         'description': request.form['description'].capitalize()}
             if checkForEmptySpaces(currentdict):
                 # organizes and appends new element to lis if not then return bad result
-                try:
-                    organize(currentdict, lis)
-                    # will return a result url with a success
-                    return redirect(url_for('result', result=1))
-                except:
-                    return redirect(url_for('result', result=0))
+                organize(currentdict, lis)
+
+                # will return a result url with a success
+                session['result'] = 1
+                return redirect(url_for('result'))
+                            
+            # if there are missing attributes asks user to try again
             else:
-                # if the dictionary saves correctly, but there are missing attributes
-                return redirect(url_for('result', result=2))
+                session['result'] = 2
+                return redirect(url_for('result'))
     except:
         # will return a result url showing no success
-        return redirect(url_for('result', result=0))
+        session['result'] = 0
+        return redirect(url_for('result'))
 
 # orgainzes dictionary in order according to priority and how long ticket has been active.
 def organize(dict, list):
