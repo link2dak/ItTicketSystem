@@ -1,10 +1,45 @@
 from flask import Flask,redirect,url_for,render_template,request, session
+from flask_bcrypt import Bcrypt
+from flask_login import (
+    LoginManager,
+    UserMixin,
+    login_user,
+    login_required,
+    logout_user,
+    current_user,
+)
 import pdb
+
 app = Flask(__name__)
+bcrypt = Bcrypt(app)
 app.secret_key = "super-secret-key"
+
+# --- Extensions ---
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = "login"
+login_manager.login_message = "login necessary to view list"
+
 
 lis = []
 currentdict = {}
+#replace with actual database
+USERS = {}
+
+# user model for login
+class User(UserMixin):
+    def __init__(self, id, email, password_hash):
+        self.id = id
+        self.email = email
+        self.password_hash = password_hash
+
+# --- Required by Flask-Login ---
+@login_manager.user_loader
+def load_user(user_id):
+    return USERS.get(user_id)
+
+#hardcode first default user
+USERS['link2dak@gmail.com'] = User(id = "link2dak@gmail.com", email = "link2dak@gmail.com", password_hash = bcrypt.generate_password_hash('1234').decode("utf-8"))
 
 @app.route('/')
 def home():
@@ -14,27 +49,50 @@ def home():
 # this page is loaded when successfully submitting a form
 @app.route('/result')
 def result():
+    global currentdict
     result = session.get('result')
-    return render_template('success.html', result=result)
+    return render_template('success.html', result=result, currentName = currentdict['name'])
 
 @app.route('/ticketSubmission')
 def ticketSubmission():
     return render_template('index.html')
 
-@app.route('/ticketList', methods = ['GET'])
+@app.route('/ticketList')
+@login_required
 def ticketList():
     global currentdict
     return render_template('ticketList.html', result = lis, currentdict = None)
 
 @app.route('/ticketListSubmission')
-def tiecktListSubmission():
+@login_required
+def ticketListSubmission():
     global currentdict
     return render_template('ticketList.html', result = lis, currentdict = currentdict)
 
+#this is called when the user is not logged in
+@login_manager.unauthorized_handler
+def unauthorized():
+    return redirect(url_for("login"))
+
+@app.route('/login', methods = ['POST', 'GET'])
+def login():
+    if request.method == "POST":
+        #gets the inputed username and password
+        email = request.form['email']
+        password = request.form['password']
+
+        user = USERS.get(email)
+
+        # if user exists and password matches then login
+        if user and bcrypt.check_password_hash(user.password_hash, password):
+            #if true then log in user and remeber
+            login_user(user)
+            return  redirect(url_for("/ticketList"))
+        return "invalid credentials", 401
+    return render_template('/login.html')
 
 
 @app.route('/submit', methods = ['POST', 'GET'])
-
 def submit():
     #added breakpoint for debugging
     pdb.set_trace
