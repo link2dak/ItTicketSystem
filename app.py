@@ -1,7 +1,11 @@
 from flask import Flask,redirect,url_for,render_template,request, session
 import pdb
+import os
+from dotenv import load_dotenv
+
+load_dotenv
 app = Flask(__name__)
-app.secret_key = "super-secret-key"
+app.secret_key = os.getenv("MY_KEY")
 
 lis = []
 currentdict = {}
