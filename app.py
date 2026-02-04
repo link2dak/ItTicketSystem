@@ -1,8 +1,8 @@
 from flask import Flask,redirect,url_for,render_template,request, session
 import pdb
 import os
-# from azure.identity import DefaultAzureCredential
-# from azure.keyvault.secrets import SecretClient
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.secrets import SecretClient
 
 
 def create_app():
@@ -15,12 +15,12 @@ def create_app():
 app = Flask(__name__)
 
 #setting up key from azure
-# kVURL = 'https://itticketgithubkeyvault.vault.azure.net/'
+kVURL = 'https://itticketgithubkeyvault.vault.azure.net/'
 
-# credential = DefaultAzureCredential()
-# client = SecretClient(vault_url=kVURL, credential=credential)
+credential = DefaultAzureCredential()
+client = SecretClient(vault_url=kVURL, credential=credential)
 
-# app.secret_key = client.get_secret('MY-KEY').value
+app.secret_key = client.get_secret('MY-KEY').value
 # app.secret_key = os.environ['MY_SECRET_KEY']
 
 lis = []
