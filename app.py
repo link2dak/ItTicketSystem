@@ -1,8 +1,8 @@
 from flask import Flask,redirect,url_for,render_template,request, session
 import pdb
 import os
-from azure.identity import DefaultAzureCredential
-from azure.keyvault.secrets import SecretClient
+# from azure.identity import DefaultAzureCredential
+# from azure.keyvault.secrets import SecretClient
 
 
 def create_app():
