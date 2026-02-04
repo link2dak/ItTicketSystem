@@ -12,8 +12,8 @@ kVURL = 'https://itticketgithubkeyvault.vault.azure.net/'
 credential = DefaultAzureCredential()
 client = SecretClient(vault_url=kVURL, credential=credential)
 
-# app.secret_key = client.get_secret('MY-KEY').value
-app.secret_key = os.environ['MY_SECRET_KEY']
+app.secret_key = client.get_secret('MY-KEY').value
+# app.secret_key = os.environ['MY_SECRET_KEY']
 
 lis = []
 currentdict = {}
