@@ -1,11 +1,18 @@
 from flask import Flask,redirect,url_for,render_template,request, session
 import pdb
 import os
-from dotenv import load_dotenv
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.secrets import SecretClient
 
-load_dotenv
 app = Flask(__name__)
-app.secret_key = os.getenv("MY_KEY")
+
+#setting up key from azure
+kVURL = 'https://itticketgithubkeyvault.vault.azure.net/'
+
+credential = DefaultAzureCredential()
+client = SecretClient(vault_url=kVURL, credential=credential)
+
+app.secret_key = client.get_secret('MY-KEY').value
 
 lis = []
 currentdict = {}
