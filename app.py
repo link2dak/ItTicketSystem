@@ -7,14 +7,14 @@ from azure.keyvault.secrets import SecretClient
 
 app = Flask(__name__)
 
-#setting up key from azure
-# kVURL = 'https://itticketgithubkeyvault.vault.azure.net/'
+# setting up key from azure
+kVURL = 'https://itticketgithubkeyvault.vault.azure.net/'
 
-# credential = DefaultAzureCredential()
-# client = SecretClient(vault_url=kVURL, credential=credential)
+credential = DefaultAzureCredential()
+client = SecretClient(vault_url=kVURL, credential=credential)
 
-# app.secret_key = client.get_secret('MY-KEY').value
-app.secret_key = 'my_secret'
+app.secret_key = client.get_secret('MY-KEY').value
+# app.secret_key = 'my_secret'
 
 lis = []
 currentdict = {}
