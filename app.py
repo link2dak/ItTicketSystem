@@ -8,17 +8,20 @@ from flask_login import (
     logout_user,
     current_user,
 )
+from datetime import timedelta
 import pdb
 
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
 app.secret_key = "super-secret-key"
+# will make user login again if they have left the session for 1 hour
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=1)
 
 # --- Extensions ---
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
-login_manager.login_message = "login necessary to view list"
+
 
 
 lis = []
@@ -86,10 +89,10 @@ def login():
         # if user exists and password matches then login
         if user and bcrypt.check_password_hash(user.password_hash, password):
             #if true then log in user and remeber
-            login_user(user)
-            return  redirect(url_for("/ticketList"))
+            login_user(user, remember = False)
+            return  redirect(url_for("ticketList"))
         return "invalid credentials", 401
-    return render_template('/login.html')
+    return render_template('login.html')
 
 
 @app.route('/submit', methods = ['POST', 'GET'])
