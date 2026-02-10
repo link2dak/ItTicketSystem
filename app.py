@@ -9,6 +9,7 @@ from flask_login import (
     current_user,
 )
 from datetime import timedelta
+import sqlite3
 import pdb
 
 app = Flask(__name__)
@@ -23,6 +24,10 @@ login_manager.init_app(app)
 login_manager.login_view = "login"
 
 
+# create or open database and connect
+DB_PATH = "database.db"
+conn = sqlite3.connect(DB_PATH)
+curser = conn.cursor()
 
 lis = []
 currentdict = {}
@@ -42,7 +47,13 @@ def load_user(user_id):
     return USERS.get(user_id)
 
 #hardcode first default user
-USERS['link2dak@gmail.com'] = User(id = "link2dak@gmail.com", email = "link2dak@gmail.com", password_hash = bcrypt.generate_password_hash('1234').decode("utf-8"))
+# USERS['link2dak@gmail.com'] = User(id = "link2dak@gmail.com", email = "link2dak@gmail.com", password_hash = bcrypt.generate_password_hash('1234').decode("utf-8"))
+# print("this is the password hash" + bcrypt.generate_password_hash('1234').decode("utf-8"))
+
+password_hash = bcrypt.generate_password_hash('1234').decode("utf-8")
+username = 'link2dak@gmail.com'
+curser.execute( "INSERT INTO Users (email, password_hash) VALUES (?, ?)",
+    (username, password_hash))
 
 @app.route('/')
 def home():
