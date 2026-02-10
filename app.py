@@ -3,7 +3,7 @@ import pdb
 import os
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.secrets import SecretClient
-
+import sqlite3
 
 app = Flask(__name__)
 
@@ -18,6 +18,8 @@ app.secret_key = client.get_secret('MY-KEY').value
 
 lis = []
 currentdict = {}
+DB_PATH = "/home/data/app.db"
+conn = sqlite3.connect(DB_PATH)
 
 @app.route('/')
 def home():
