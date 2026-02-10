@@ -31,7 +31,7 @@ currentdict = {}
 #creates a new connection to database with each request
 def get_db():
     if 'db' not in g:
-        g.db = sqlite3.connect("database.db")
+        g.db = sqlite3.connect("home/data/app.db")
     return g.db
 
 # user model for login
@@ -90,7 +90,6 @@ def login():
 
         cursor.execute('SELECT * FROM Users WHERE username = ?', (email,))
         databasePass = cursor.fetchone()
-
 
         # if user exists and password matches then login
         if databasePass and bcrypt.check_password_hash(databasePass[1], password):
