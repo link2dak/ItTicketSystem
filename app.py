@@ -1,4 +1,4 @@
-from flask import Flask,redirect,url_for,render_template,request, session
+from flask import Flask,redirect,url_for,render_template,request, session, g
 from flask_bcrypt import Bcrypt
 from flask_login import (
     LoginManager,
@@ -15,7 +15,8 @@ import pdb
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
 app.secret_key = "super-secret-key"
-# will make user login again if they have left the session for 1 hour
+
+# will make user login again if they have left the session for 1 hour or more
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=1)
 
 # --- Extensions ---
@@ -23,16 +24,15 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
 
-
-# create or open database and connect
-DB_PATH = "database.db"
-conn = sqlite3.connect(DB_PATH)
-curser = conn.cursor()
-
+USERS = {}
 lis = []
 currentdict = {}
-#replace with actual database
-USERS = {}
+
+#creates a new connection to database with each request
+def get_db():
+    if 'db' not in g:
+        g.db = sqlite3.connect("database.db")
+    return g.db
 
 # user model for login
 class User(UserMixin):
@@ -45,15 +45,6 @@ class User(UserMixin):
 @login_manager.user_loader
 def load_user(user_id):
     return USERS.get(user_id)
-
-#hardcode first default user
-# USERS['link2dak@gmail.com'] = User(id = "link2dak@gmail.com", email = "link2dak@gmail.com", password_hash = bcrypt.generate_password_hash('1234').decode("utf-8"))
-# print("this is the password hash" + bcrypt.generate_password_hash('1234').decode("utf-8"))
-
-password_hash = bcrypt.generate_password_hash('1234').decode("utf-8")
-username = 'link2dak@gmail.com'
-curser.execute( "INSERT INTO Users (email, password_hash) VALUES (?, ?)",
-    (username, password_hash))
 
 @app.route('/')
 def home():
@@ -90,16 +81,23 @@ def unauthorized():
 
 @app.route('/login', methods = ['POST', 'GET'])
 def login():
+    db = get_db()
+    cursor = db.cursor()
     if request.method == "POST":
         #gets the inputed username and password
         email = request.form['email']
         password = request.form['password']
 
-        user = USERS.get(email)
+        cursor.execute('SELECT * FROM Users WHERE username = ?', (email,))
+        databasePass = cursor.fetchone()
+
 
         # if user exists and password matches then login
-        if user and bcrypt.check_password_hash(user.password_hash, password):
-            #if true then log in user and remeber
+        if databasePass and bcrypt.check_password_hash(databasePass[1], password):
+            #if true then log in user
+
+            user = User(id = email, email = email, password_hash=databasePass[1])
+            USERS[email] = user
             login_user(user, remember = False)
             return  redirect(url_for("ticketList"))
         return "invalid credentials", 401
