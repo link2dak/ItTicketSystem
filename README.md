@@ -1,6 +1,6 @@
 # IT Ticket Submission Web Application
 
-This project is a web-based IT ticket submission system that is deployed as an Azure App Service Resource. It allows users to submit support requests through a form and view submitted tickets on a separate ticket listing page.
+This project is a web-based IT ticket submission system that is deployed in Azyure. It allows users to submit support requests through a form and view submitted tickets on a separate ticket listing page.
 
 The application is designed to simulate a basic help desk workflow, focusing on form handling, server-side processing, and dynamic page rendering.
 
