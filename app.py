@@ -31,7 +31,7 @@ currentdict = {}
 #creates a new connection to database with each request
 def get_db():
     if 'db' not in g:
-        g.db = sqlite3.connect("home/data/app.db")
+        g.db = sqlite3.connect("database.db")
     return g.db
 
 # user model for login
