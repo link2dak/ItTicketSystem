@@ -11,6 +11,9 @@
 
 <body>
      <!--making tabs-->
+
+    <!-- <form class="form-main" action="submit" method="POST"> -->
+
     <div class="tab">
         <button class="tablinks" data-url="{{ url_for('ticketSubmission') }}" data-state="inactive">Ticket Submission</button>
         <button class="tablinks" data-url="{{ url_for('ticketList') }}" data-state="active">Ticket List</button>
@@ -18,31 +21,39 @@
 
     <h1>Ticket Submissions</h1>
 
-
 <!--checks if there are any submissions-->
 {% if result %}
+  <div class="ticket-wrapper">
   {% for ticket in result %}
     {% if ticket == currentTicket %}
+      <input type = 'checkbox' id={{ticket[0]}} name= {{ticket[0]}} value = {{ticket[0]}}>
       <button type= "button" class="collapsible" data-state="active">
-        Priority: {{ ticket[3] }}, {{ticket[0]}}
+      Priority: {{ ticket[4] }}, {{ticket[1]}}
       </button>
     {% else %}
-      <button type= "button" class="collapsible" data-state="inactive">
-        Priority: {{ ticket[3] }}, {{ticket[0]}}
-      </button>
+        <div class = "ticket-row">
+        <input type = 'checkbox' id={{ticket[0]}} name= {{ticket[0]}} value = {{ticket[0]}}>
+        <button type= "button" class="collapsible" data-state="inactive">
+      
+        Priority: {{ ticket[4] }}, {{ticket[1]}}
+        </button>
+        </div>
+      
     {% endif %}
+  
     <!--adds the discription to the drop down-->
     <div class= "content">
         <P>
-            Department: {{ ticket[2] }}<br>
-            Summary: {{ticket[4]}} <br><br>
+            Department: {{ ticket[3] }}<br>
+            Summary: {{ticket[5]}} <br><br>
             {{ticket[5]}}<br>
 
-            Email: {{ticket[1]}}
+            Email: {{ticket[2]}}
         </P>
     </div>
+  
   {% endfor %}
-
+  </div>  
 <!--if there are no submissions-->
 {% else %}
   <p>No Tickets Submitted.</p>

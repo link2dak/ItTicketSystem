@@ -16,6 +16,20 @@
     display: block;
   }
 
+.ticket-wrapper {
+    margin-bottom: 10px;
+}
+.ticket-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.ticket-row .collapsible {
+    flex: 1;
+    text-align: left;
+}
+
   .content-list{
         display: none;
         padding: 6px 12px;
@@ -74,4 +88,5 @@
         display: none;
         overflow: hidden;
         background-color: #f1f1f1;
+        margin-left: 30px;
 }

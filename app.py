@@ -8,13 +8,23 @@ from flask_login import (
     logout_user,
     current_user,
 )
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.secrets import SecretClient
 from datetime import timedelta
 import sqlite3
 import pdb
 
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
-app.secret_key = "super-secret-key"
+
+
+# setting up key from azure
+kVURL = 'https://itticketgithubkeyvault.vault.azure.net/'
+
+credential = DefaultAzureCredential()
+client = SecretClient(vault_url=kVURL, credential=credential)
+
+app.secret_key = client.get_secret('MY-KEY').value
 
 # will make user login again if they have left the session for 1 hour or more
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=1)
@@ -47,6 +57,16 @@ def load_user(user_id):
 
 @app.route('/')
 def home():
+    # db = get_db()
+    # cursor = db.cursor()
+
+    # password = bcrypt.generate_password_hash('1234')
+    # db = get_db()
+    # cursor = db.cursor()
+
+    # cursor.execute("INSERT INTO Users(username, password_hash) VALUES (?, ?)", ('link2dak@gmail.com', password))
+    # db.commit()
+
     # Render the HTML and pass data to it
     return render_template('index.html')
 
@@ -155,13 +175,15 @@ def login():
     db.close()
     return render_template('login.html')
 
-
 @app.route('/submit', methods = ['POST', 'GET'])
 def submit():
     #added breakpoint for debugging
     pdb.set_trace
+    
     db = get_db()
     cursor = db.cursor()
+
+
 
     currentdict = {"name": request.form['name'].capitalize(),
                         "email": request.form['email'].capitalize(),
