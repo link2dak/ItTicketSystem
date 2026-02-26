@@ -11,10 +11,22 @@ from flask_login import (
 from datetime import timedelta
 import sqlite3
 import pdb
+import os
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.secrets import SecretClient
+import sqlite3
 
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
-app.secret_key = "super-secret-key"
+
+# setting up key from azure
+kVURL = 'https://itticketgithubkeyvault.vault.azure.net/'
+
+credential = DefaultAzureCredential()
+client = SecretClient(vault_url=kVURL, credential=credential)
+
+app.secret_key = client.get_secret('MY-KEY').value
+# app.secret_key = 'my_secret'
 
 # will make user login again if they have left the session for 1 hour or more
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=1)
@@ -27,11 +39,13 @@ login_manager.login_view = "login"
 USERS = {}
 lis = []
 currentdict = {}
+DB_PATH = "/home/data/app.db"
+conn = sqlite3.connect(DB_PATH)
 
 #creates a new connection to database with each request
 def get_db():
     if 'db' not in g:
-        g.db = sqlite3.connect("home/data/app.db")
+        g.db = sqlite3.connect("/home/data/app.db")
     return g.db
 
 # user model for login
