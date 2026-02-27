@@ -33,5 +33,5 @@ pip install flask
 2. Run the application:
 python app.py
 
-3.Open your web browser and go to:
+3. Open your web browser and go to:
 http://localhost:5000
