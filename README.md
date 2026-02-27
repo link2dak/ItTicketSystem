@@ -30,7 +30,7 @@ To run the application locally, follow these steps:
 1. Install Flask:
 pip install flask
 
-3. Run the application:
+2. Run the application:
 python app.py
 
 3.Open your web browser and go to:
