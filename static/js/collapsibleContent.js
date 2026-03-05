@@ -1,5 +1,4 @@
 //checks if a button is clicked and togles the content of it
-    // var coll2 = document.getElementsByClassName("collapsible");
     const wrapper = document.querySelector('.ticket-wrapper');
     const collList = wrapper.querySelectorAll('.collapsible');
     const conList = wrapper.querySelectorAll('.content')
@@ -8,17 +7,14 @@
         //checks if the button was most currently added and displays it as if it was clicked
             console.log(className.dataset.state)
             if(className.dataset.state === "active"){
-            var content = collList[Array.from(collList).indexOf(className)].nextElementSibling;
-            console.log("there has been a match for active")
-            collList[i].classList.toggle("active")
-            content.style.display = "block";
+                click(className, conList, Array.from(collList).indexOf(className));
             
-            //makes the state inactive again
-            collList[i].dataset.state = "inactive";
-        }
-        className.addEventListener("click", () => click(className, conList, Array.from(collList).indexOf(className)));
-}   
+                //makes the state inactive again
+                className.dataset.state = "inactive";
+            }
+            className.addEventListener("click", () => click(className, conList, Array.from(collList).indexOf(className)));
 
+}   
 
 function click(name, con, index){
         name.classList.toggle("active");
@@ -30,3 +26,29 @@ function click(name, con, index){
         content.style.display = "block";
         }
 }
+
+
+//make the delete button appear when a checkbox is selected
+const checkBoxes = document.querySelectorAll('input[type="checkbox"][name="checkbox"]');
+const deleteButton = document.getElementById('deleteButton');
+console.log(checkBoxes)
+
+
+
+    for (const checkbox of checkBoxes){
+        checkbox.addEventListener('click', function(){
+            var boolean = false;
+            //checks to see if there are any other 
+            for(check of checkBoxes){
+                if(check.checked){
+                    boolean = true;
+                }
+            }
+            if(checkbox.checked){
+                deleteButton.style.display = 'block';
+            }
+            else if(!boolean){
+                deleteButton.style.display = 'none';
+            }
+        })
+    }

@@ -12,8 +12,6 @@
 <body>
      <!--making tabs-->
 
-    <!-- <form class="form-main" action="submit" method="POST"> -->
-
     <div class="tab">
         <button class="tablinks" data-url="{{ url_for('ticketSubmission') }}" data-state="inactive">Ticket Submission</button>
         <button class="tablinks" data-url="{{ url_for('ticketList') }}" data-state="active">Ticket List</button>
@@ -23,19 +21,22 @@
 
 <!--checks if there are any submissions-->
 {% if result %}
-  <div class="ticket-wrapper">
+  <form class="ticket-wrapper" action = 'delete' method = 'POST'>
   {% for ticket in result %}
     {% if ticket == currentTicket %}
-      <input type = 'checkbox' id={{ticket[0]}} name= {{ticket[0]}} value = {{ticket[0]}}>
+      <div class = "ticket-row">
+      <input type = 'checkbox' class = 'check' id='checkbox' name= 'checkbox' value = {{ticket[0]}}>
       <button type= "button" class="collapsible" data-state="active">
-      Priority: {{ ticket[4] }}, {{ticket[1]}}
+        
+      Priority: {{ ticket[4] }}, Name: {{ticket[1]}}
       </button>
+      </div>
     {% else %}
         <div class = "ticket-row">
-        <input type = 'checkbox' id={{ticket[0]}} name= {{ticket[0]}} value = {{ticket[0]}}>
+        <input type = 'checkbox' class = 'check' id='checkbox' name= 'checkbox' value = {{ticket[0]}}>
         <button type= "button" class="collapsible" data-state="inactive">
       
-        Priority: {{ ticket[4] }}, {{ticket[1]}}
+        Priority: {{ ticket[4] }}, Name: {{ticket[1]}}
         </button>
         </div>
       
@@ -46,13 +47,17 @@
         <P>
             Department: {{ ticket[3] }}<br>
             Summary: {{ticket[5]}} <br><br>
-            {{ticket[5]}}<br>
+            {{ticket[6]}}<br><br>
 
             Email: {{ticket[2]}}
         </P>
     </div>
   
   {% endfor %}
+  
+
+  <button type="delete" id ='deleteButton' class="delete-button">Delete</button>
+
   </div>  
 <!--if there are no submissions-->
 {% else %}

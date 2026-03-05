@@ -5,8 +5,6 @@ from flask_login import (
     UserMixin,
     login_user,
     login_required,
-    logout_user,
-    current_user,
 )
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.secrets import SecretClient
@@ -19,7 +17,7 @@ bcrypt = Bcrypt(app)
 
 
 # setting up key from azure
-kVURL = 'https://itticketgithubkeyvault.vault.azure.net/'
+kVURL = 'https://itticketgithubkeyvault.vault.azure.net/' #add this as a app setting in azure
 
 credential = DefaultAzureCredential()
 client = SecretClient(vault_url=kVURL, credential=credential)
@@ -40,7 +38,7 @@ CURRENT = 0
 #creates a new connection to database with each request
 def get_db():
     if 'db' not in g:
-        g.db = sqlite3.connect("database.db")
+        g.db = sqlite3.connect("database.db") # add database as a app setting in azure
     return g.db
 
 # user model for login
@@ -57,16 +55,7 @@ def load_user(user_id):
 
 @app.route('/')
 def home():
-    # db = get_db()
-    # cursor = db.cursor()
-
-    # password = bcrypt.generate_password_hash('1234')
-    # db = get_db()
-    # cursor = db.cursor()
-
-    # cursor.execute("INSERT INTO Users(username, password_hash) VALUES (?, ?)", ('link2dak@gmail.com', password))
-    # db.commit()
-
+    
     # Render the HTML and pass data to it
     return render_template('index.html')
 
@@ -179,7 +168,7 @@ def login():
 def submit():
     #added breakpoint for debugging
     pdb.set_trace
-    
+
     db = get_db()
     cursor = db.cursor()
 
@@ -221,39 +210,28 @@ def submit():
     
     db.close()
 
-    # i = len(list) - 1 
-    # dictPriority = prioityCheck(dict['priority'])
+@app.route("/delete", methods = {'POST', 'GET'})
+@login_required
+def delete():
 
-    # #checks for an empty list, and appends dict
-    # if len(list) == 0:
-    #     list.append(dict)
-    #     return
-    # # loops through list and finds correct index for dict
-    # for dictlis in reversed(list):
-    #     dictlisPriority = prioityCheck(dictlis['priority'])
-    #     # If priority value is same, then put in list right after 
-    #     if dictPriority == dictlisPriority:
-    #         list.insert(i+1, dict)
-    #         return
-    #     # If higher put in list earlier
-    #     elif dictPriority > dictlisPriority:
-    #         i = i-1      
-    #         continue
-    #     # if it is less than, put in list right after
-    #     elif dictPriority < dictlisPriority:
-    #         list.insert(i+1, dict)
-    #         return
-    # # if whole list is looped, means that the item is highest priority
-    # list.insert(0, dict)
-        
-# def prioityCheck(priority):
-#     if priority == "High":
-#         return 3
-#     elif priority == "Medium":
-#         return 2
-#     elif priority == 'Low':
-#         return 1
-    
+
+    if request.method == 'POST':
+
+
+        #get all the values for the checked boxes
+        id = request.form.getlist('checkbox')
+
+        #loop through list and delete each value
+        print(id)
+        for value in id:
+            db = get_db()
+            cursor = db.cursor()
+            cursor.execute("DELETE FROM ticketData WHERE unique_id = ?", str(value))
+            
+        db.commit()
+
+        return redirect(url_for('ticketList'))
+
 
 def EmptySpaces(dict):
     for value in dict.values():
