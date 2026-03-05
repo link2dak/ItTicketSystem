@@ -24,8 +24,10 @@ client = SecretClient(vault_url=kVURL, credential=credential)
 
 app.secret_key = client.get_secret('MY-KEY').value
 
-# will make user login again if they have left the session for 1 hour or more
+# setting up app config settings
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=1)
+app.config['SESSION_COOKIE_SCURE'] = True
+app.config['SESSION_COOOKIE_HTTPONLY'] = True
 
 # --- Extensions ---
 login_manager = LoginManager()
@@ -127,9 +129,6 @@ def ticketListSubmission():
     rows = cursor.fetchall()
     db.close()
 
-    print(rows)
-    print(newest_ticket)
-
     return render_template('ticketList.html', result = rows, currentTicket = newest_ticket)
 
 #this is called when the user is not logged in
@@ -226,7 +225,7 @@ def delete():
         for value in id:
             db = get_db()
             cursor = db.cursor()
-            cursor.execute("DELETE FROM ticketData WHERE unique_id = ?", str(value))
+            cursor.execute("DELETE FROM ticketData WHERE unique_id = ?", (value,))
             
         db.commit()
 
