@@ -41,7 +41,7 @@ USERS = {}
 lis = []
 currentdict = {}
 # getting document from azure
-DB = os.getenv('DOCDBCONNSTR_database')
+DB = os.getenv('data_base')
 
 #creates a new connection to database with each request
 def get_db():
