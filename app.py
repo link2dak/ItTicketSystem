@@ -81,7 +81,6 @@ def ticketSubmission():
 @app.route('/ticketList')
 @login_required
 def ticketList():
-    pdb.set_trace
     db = get_db()
     cursor = db.cursor()
 
