@@ -15,12 +15,13 @@ import os
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.secrets import SecretClient
 import sqlite3
+import os
 
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
 
 # setting up key from azure
-kVURL = 'https://itticketgithubkeyvault.vault.azure.net/'
+kVURL = os.getenv('KeyVault')
 
 credential = DefaultAzureCredential()
 client = SecretClient(vault_url=kVURL, credential=credential)
@@ -39,13 +40,13 @@ login_manager.login_view = "login"
 USERS = {}
 lis = []
 currentdict = {}
-DB_PATH = "/home/data/app.db"
-conn = sqlite3.connect(DB_PATH)
+DB = os.getenv('DOCDBCONNSTR_database')
+conn = sqlite3.connect(DB)
 
 #creates a new connection to database with each request
 def get_db():
     if 'db' not in g:
-        g.db = sqlite3.connect("/home/data/app.db")
+        g.db = sqlite3.connect(DB)
     return g.db
 
 # user model for login
