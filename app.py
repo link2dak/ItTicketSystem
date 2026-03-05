@@ -5,9 +5,9 @@ from flask_login import (
     UserMixin,
     login_user,
     login_required,
-    logout_user,
-    current_user,
 )
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.secrets import SecretClient
 from datetime import timedelta
 import sqlite3
 import pdb
@@ -29,8 +29,20 @@ client = SecretClient(vault_url=kVURL, credential=credential)
 app.secret_key = client.get_secret('MY-KEY').value
 # app.secret_key = 'my_secret'
 
-# will make user login again if they have left the session for 1 hour or more
+
+
+# setting up key from azure
+kVURL = 'https://itticketgithubkeyvault.vault.azure.net/' #add this as a app setting in azure
+
+credential = DefaultAzureCredential()
+client = SecretClient(vault_url=kVURL, credential=credential)
+
+app.secret_key = client.get_secret('MY-KEY').value
+
+# setting up app config settings
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=1)
+app.config['SESSION_COOKIE_SCURE'] = True
+app.config['SESSION_COOOKIE_HTTPONLY'] = True
 
 # --- Extensions ---
 login_manager = LoginManager()
@@ -64,6 +76,7 @@ def load_user(user_id):
 
 @app.route('/')
 def home():
+    
     # Render the HTML and pass data to it
     return render_template('index.html')
 
@@ -72,7 +85,7 @@ def home():
 def result():
     global currentdict
     result = session.get('result')
-    return render_template('success.html', result=result, currentName = currentdict['name'])
+    return render_template('success.html', result=result)
 
 @app.route('/ticketSubmission')
 def ticketSubmission():
@@ -81,14 +94,61 @@ def ticketSubmission():
 @app.route('/ticketList')
 @login_required
 def ticketList():
-    global currentdict
-    return render_template('ticketList.html', result = lis, currentdict = None)
+    pdb.set_trace
+    db = get_db()
+    cursor = db.cursor()
+
+    # gets the data from the database and puts it in order from priority and when they were added
+    cursor.execute("""
+        SELECT *
+        FROM ticketData
+        ORDER BY
+            CASE UPPER(priority)
+                WHEN 'HIGH' THEN 1
+                WHEN 'MEDIUM' THEN 2
+                WHEN 'LOW' THEN 3
+                ELSE 4
+            END,
+            created_at ASC
+    """)
+
+    rows = cursor.fetchall()
+    db.close()
+    return render_template('ticketList.html', result = rows)
 
 @app.route('/ticketListSubmission')
 @login_required
 def ticketListSubmission():
-    global currentdict
-    return render_template('ticketList.html', result = lis, currentdict = currentdict)
+
+    db = get_db()
+    cursor = db.cursor()
+    
+    cursor.execute("""
+    SELECT *
+    FROM ticketData
+    ORDER BY created_at DESC
+    LIMIT 1
+                   """)
+    
+    newest_ticket = cursor.fetchone()
+
+    cursor.execute("""
+        SELECT *
+        FROM ticketData
+        ORDER BY
+            CASE UPPER(priority)
+                WHEN 'HIGH' THEN 1
+                WHEN 'MEDIUM' THEN 2
+                WHEN 'LOW' THEN 3
+                ELSE 4
+            END,
+            created_at ASC
+    """)
+
+    rows = cursor.fetchall()
+    db.close()
+
+    return render_template('ticketList.html', result = rows, currentTicket = newest_ticket)
 
 #this is called when the user is not logged in
 @login_manager.unauthorized_handler
@@ -113,83 +173,88 @@ def login():
 
             user = User(id = email, email = email, password_hash=databasePass[1])
             USERS[email] = user
-            login_user(user, remember = False)
+            login_user(user, remember = True)
+            
             return  redirect(url_for("ticketList"))
         return "invalid credentials", 401
+    
+    db.close()
     return render_template('login.html')
-
 
 @app.route('/submit', methods = ['POST', 'GET'])
 def submit():
     #added breakpoint for debugging
     pdb.set_trace
-    global currentdict
-    try:
-        if request.method == 'POST':
-            currentdict = {"name": request.form['name'].capitalize(),
+
+    db = get_db()
+    cursor = db.cursor()
+
+
+
+    currentdict = {"name": request.form['name'].capitalize(),
                         "email": request.form['email'].capitalize(),
                         "department": request.form['department'].capitalize(),
                         'priority': request.form['priority'].capitalize(),
                         'subject': request.form['subject'].capitalize(),
                         'description': request.form['description'].capitalize()}
-            if checkForEmptySpaces(currentdict):
-                # organizes and appends new element to lis if not then return bad result
-                organize(currentdict, lis)
-
-                # will return a result url with a success
-                session['result'] = 1
-                return redirect(url_for('result'))
-                            
-            # if there are missing attributes asks user to try again
-            else:
-                session['result'] = 2
-                return redirect(url_for('result'))
-    except:
-        # will return a result url showing no success
-        session['result'] = 0
+    if EmptySpaces(currentdict):
+        # if there are missing attributes asks user to try again
+        session['result'] = 2
         return redirect(url_for('result'))
 
-# orgainzes dictionary in order according to priority and how long ticket has been active.
-def organize(dict, list):
-    i = len(list) - 1 
-    dictPriority = prioityCheck(dict['priority'])
-
-    #checks for an empty list, and appends dict
-    if len(list) == 0:
-        list.append(dict)
-        return
-    # loops through list and finds correct index for dict
-    for dictlis in reversed(list):
-        dictlisPriority = prioityCheck(dictlis['priority'])
-        # If priority value is same, then put in list right after 
-        if dictPriority == dictlisPriority:
-            list.insert(i+1, dict)
-            return
-        # If higher put in list earlier
-        elif dictPriority > dictlisPriority:
-            i = i-1      
-            continue
-        # if it is less than, put in list right after
-        elif dictPriority < dictlisPriority:
-            list.insert(i+1, dict)
-            return
-    # if whole list is looped, means that the item is highest priority
-    list.insert(0, dict)
-        
-def prioityCheck(priority):
-    if priority == "High":
-        return 3
-    elif priority == "Medium":
-        return 2
-    elif priority == 'Low':
-        return 1
     
+    try:
+        if request.method == 'POST':
+            cursor.execute('INSERT INTO ticketData (name, email, department, priority, subject, description) VALUES (?, ?, ?, ?, ?, ?)',
+                           (
+                           request.form['name'].capitalize(),
+                           request.form['email'].capitalize(),
+                           request.form['department'].capitalize(),
+                           request.form['priority'].capitalize(),
+                           request.form['subject'].capitalize(),
+                           request.form['description'].capitalize()
+                           )
+            )
+            db.commit()
+            # will return a result url with a success
+            session['result'] = 1
+            return redirect(url_for('result'))
+                   
+    except:
+        # if there are missing attributes asks user to try again
+        session['result'] = 2
+        return redirect(url_for('result'))
+    
+    db.close()
 
-def checkForEmptySpaces(dict):
+@app.route("/delete", methods = {'POST', 'GET'})
+@login_required
+def delete():
+
+
+    if request.method == 'POST':
+
+
+        #get all the values for the checked boxes
+        id = request.form.getlist('checkbox')
+
+        #loop through list and delete each value
+        print(id)
+        for value in id:
+            db = get_db()
+            cursor = db.cursor()
+            cursor.execute("DELETE FROM ticketData WHERE unique_id = ?", (value,))
+            
+        db.commit()
+
+        return redirect(url_for('ticketList'))
+
+
+def EmptySpaces(dict):
     for value in dict.values():
         # checks if the value is not empty and doesnt only contain blank space
         if not value or value.isspace():
-            return False
-    return True
+            return True
+    return False
 if __name__ == '__main__':
     app.run(debug = True)

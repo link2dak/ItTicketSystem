@@ -16,6 +16,23 @@
     display: block;
   }
 
+.ticket-wrapper {
+    margin-bottom: 10px;
+}
+.ticket-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.ticket-row .collapsible {
+    flex: 1;
+    text-align: left;
+}
+.ticekt-row input[type='checkbox']{
+    accent-color: black;
+}
+
   .content-list{
         display: none;
         padding: 6px 12px;
@@ -38,7 +55,7 @@
         background-color: inherit;
         float: left;
         border: none;
-        outline: none;
+        outline: 1px solid rgba(128, 128, 128, 0.74);
         cursor: pointer;
         padding: 14px 16px;
         transition: 0.3s;
@@ -74,4 +91,15 @@
         display: none;
         overflow: hidden;
         background-color: #f1f1f1;
+        margin-left: 30px;
+}
+
+.delete-button {
+    display: none;
+    margin-top: 20px;
+    margin-left: 30px;
+}
+
+.filter{
+    margin
 }
