@@ -20,7 +20,7 @@ import os
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
 
-# setting up key from azure
+# getting keyvault value from azure
 kVURL = os.getenv('KeyVault')
 
 credential = DefaultAzureCredential()
@@ -40,6 +40,7 @@ login_manager.login_view = "login"
 USERS = {}
 lis = []
 currentdict = {}
+# getting document from azure
 DB = os.getenv('DOCDBCONNSTR_database')
 conn = sqlite3.connect(DB)
 
