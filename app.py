@@ -21,11 +21,11 @@ bcrypt = Bcrypt(app)
 
 
 # setting up key from azure
-kVURL = os.getenv('Key_Vault_URL') #add this as a app setting in azure
+kVURL = os.getenv('https://itticketgithubkeyvault.vault.azure.net/') #add this as a app setting in azure
 
 credential = DefaultAzureCredential()
 client = SecretClient(vault_url=kVURL, credential=credential)
-app.secret_key = client.get_secret('Key_Vault_Name').value
+app.secret_key = client.get_secret('MY-KEY').value
 
 # setting up app config settings
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=1)
@@ -41,7 +41,7 @@ USERS = {}
 lis = []
 currentdict = {}
 # getting document from azure
-DB = os.getenv('data_base')
+DB = os.getenv('app.db')
 
 #creates a new connection to database with each request
 def get_db():
