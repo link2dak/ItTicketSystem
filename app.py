@@ -10,7 +10,6 @@ from azure.identity import DefaultAzureCredential
 from azure.keyvault.secrets import SecretClient
 from datetime import timedelta
 import sqlite3
-import pdb
 import os
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.secrets import SecretClient
@@ -20,29 +19,18 @@ import os
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
 
-# getting keyvault value from azure
-kVURL = os.getenv('KeyVault')
-
-credential = DefaultAzureCredential()
-client = SecretClient(vault_url=kVURL, credential=credential)
-
-app.secret_key = client.get_secret('MY-KEY').value
-# app.secret_key = 'my_secret'
-
-
 
 # setting up key from azure
-kVURL = 'https://itticketgithubkeyvault.vault.azure.net/' #add this as a app setting in azure
+kVURL = os.getenv('Key_Vault_URL') #add this as a app setting in azure
 
 credential = DefaultAzureCredential()
 client = SecretClient(vault_url=kVURL, credential=credential)
-
-app.secret_key = client.get_secret('MY-KEY').value
+app.secret_key = client.get_secret('Key_Vault_Name').value
 
 # setting up app config settings
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=1)
-app.config['SESSION_COOKIE_SCURE'] = True
-app.config['SESSION_COOOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SECURE'] = True
+app.config['SESSION_COOKIE_HTTPONLY'] = True
 
 # --- Extensions ---
 login_manager = LoginManager()
@@ -54,7 +42,6 @@ lis = []
 currentdict = {}
 # getting document from azure
 DB = os.getenv('DOCDBCONNSTR_database')
-conn = sqlite3.connect(DB)
 
 #creates a new connection to database with each request
 def get_db():
@@ -183,9 +170,7 @@ def login():
 
 @app.route('/submit', methods = ['POST', 'GET'])
 def submit():
-    #added breakpoint for debugging
-    pdb.set_trace
-
+    
     db = get_db()
     cursor = db.cursor()
 
@@ -257,4 +242,4 @@ def EmptySpaces(dict):
             return True
     return False
 if __name__ == '__main__':
-    app.run(debug = True)
+    app.run()
