@@ -1,6 +1,5 @@
-Flask==2.3.2
-gunicorn==21.2.0
-flask-bcrypt
-flask-login
+Flask
+Flask-Bcrypt
+Flask-Login
 azure-identity
 azure-keyvault-secrets
