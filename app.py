@@ -24,6 +24,8 @@ loginApp = PublicClientApplication(
 # setting up key from azure
 kVURL = 'https://itticketgithubkeyvault.vault.azure.net/' #add this as a app setting in azure
 
+REDIRECT_URI = "http://localhost:5000/auth/redi"
+
 credential = DefaultAzureCredential()
 client = SecretClient(vault_url=kVURL, credential=credential)
 
@@ -55,10 +57,11 @@ def logUserIn(app):
         print("Pick the account you want to use to proceed:")
         for i in range(len(accounts)):
             if 'access_token' in app.acquire_token_silent(["User.Read"], account=accounts[i]):
-                print(accounts[i].get('username'))
+                print(accounts[i])
+                print(app.acquire_token_silent(["User.Read"], account=accounts[i]))
                 return True
     if not result:
-        result = app.acquire_token_interactive(scopes=["User.Read"])
+        result = app.acquire_token_interactive(scopes=["User.Read"], prompt="select_account")
 
     if 'access_token' in result:
         return True
@@ -91,7 +94,11 @@ def ticketSubmission():
 
 @app.route('/ticketList')
 def ticketList():
-    if logUserIn(loginApp):
+    # if user is not logged in:
+    if 'user' not in session:
+       return redirect(url_for('login'))
+    # if user is logged in then go to next steps
+    else:
         db = get_db()
         cursor = db.cursor()
 
@@ -112,15 +119,11 @@ def ticketList():
         rows = cursor.fetchall()
         db.close()
         return render_template('ticketList.html', result = rows)
-    else:
-        return render_template('fail', res = result.get('error_description'))
+    
 
 @app.route('/ticketListSubmission')
 def ticketListSubmission():
-    result = None
-    if checkIfLoggedIn(loginApp, ['User.Read']):
-        result = app.acquire_token_interactive(scopes=["User.Read"])
-    if 'access_token' in result or checkIfLoggedIn:
+    if logUserIn(loginApp):
         db = get_db()
         cursor = db.cursor()
         
@@ -201,7 +204,6 @@ def submit():
     db.close()
 
 @app.route("/delete", methods = {'POST', 'GET'})
-@login_required
 def delete():
 
 
@@ -221,8 +223,36 @@ def delete():
         db.commit()
 
         return redirect(url_for('ticketList'))
+@app.route('/succ')
+def succ():
+    return render_template('succ.html')
 
+@app.route('/login')
+def login():
+    auth_url = loginApp.get_authorization_request_url(
+        scopes=["User.Read"],
+        redirect_uri=REDIRECT_URI,
+        prompt="select_account"
+    )
 
+    return redirect(auth_url)
+
+@app.route('/auth/redi')
+def auth_redi():
+    code = request.args.get("code")
+
+    result = loginApp.acquire_token_by_authorization_code(
+        code,
+        scopes=["User.Read"],
+        redirect_uri=REDIRECT_URI
+    )
+
+    if "access_token" in result:
+        session["user"] = result["id_token_claims"]
+        # returns the succ url for when the login is a success
+        return redirect(url_for('ticketList'))
+
+    return redirect(url_for('fail'))
 def EmptySpaces(dict):
     for value in dict.values():
         # checks if the value is not empty and doesnt only contain blank space
