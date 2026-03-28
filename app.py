@@ -246,9 +246,12 @@ def auth_redi():
         scopes=["User.Read"],
         redirect_uri=REDIRECT_URI
     )
+    user = result["id_token_claims"]
 
-    if "access_token" in result:
+    # checks if user is a part of the group that has access to app if not then redirect to fail url
+    if "209ed0a7-d6b3-4f33-b4d0-91019fd63b77" in user.get("groups"):
         session["user"] = result["id_token_claims"]
+        print("this is the result of the user... " + str(result['id_token_claims']))
         # returns the succ url for when the login is a success
         return redirect(url_for('ticketList'))
 
